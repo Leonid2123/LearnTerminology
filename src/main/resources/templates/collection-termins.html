@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>All Termins of Collection List</title>
+</head>
+<body>
+<div th:replace="~{header}"></div>
+<div class="col-md-offset-2 col-sm-8">
+    <h2 th:text="${'All Termins From ' + collection.title}"></h2>
+
+    <div style="display: flex; justify-content: right">
+        <form class="form-horizontal" th:action="@{|/collections/${collection.id}/learn|}" method="get">
+            <div>
+                <input class="btn-info btn-lg" type="submit" value="Learn">
+            </div>
+        </form>
+        <form class="form-horizontal" th:action="@{|/termins/create/collections/${collection.id}|}" method="get">
+            <div style="margin-left: 10px;">
+                <input class="btn-info btn-lg" type="submit" value="Create Termin">
+            </div>
+        </form>
+    </div>
+
+
+    <br>
+    <h3>Termins:</h3>
+    <table class="table">
+        <tr>
+            <th>No.</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Meaning</th>
+            <th colspan="2">Operations</th>
+        </tr>
+        <tr th:each="termin, iStat: ${termins}">
+            <td th:text="${iStat.index + 1}"/>
+            <td th:text="${termin.id}"/>
+            <td th:text="${termin.getName()}"/>
+            <td th:text="${termin.getMeaning()}"/>
+            <td>
+                <a th:href="@{|/termins/${termin.id}/update/collections/${collection.id}|}">Edit</a>
+            </td>
+            <td>
+                <a th:href="@{|/termins/${termin.id}/delete/collections/${collection.id}|}">Remove</a>
+            </td>
+        </tr>
+    </table>
+    <br>
+
+
+    <h3>Collaborators:</h3>
+    <span th:if="${(#authentication.principal.id == owner.id) or (#authentication.principal.getRole().getName().equals('ADMIN'))}">
+        <form class="form-horizontal" th:action="@{/collections/{id}/add(id = ${collection.id})}" method="get">
+            <select class="form-control" name="user_id" id="users">
+                <option value="-1">Select collaborator...</option>
+                <option th:each="user : ${users}" th:value="${user.id}"
+                        th:text="${user.firstName + ' ' + user.lastName}"></option>
+            </select>
+            <input align="right" class="btn btn" type="submit" value="Add">
+        </form>
+    </span>
+    <br>
+    <table class="table">
+        <tr th:each="collaborator, iStat: ${collection.collaborators}">
+            <td th:text="${iStat.index + 1}"/>
+            <td>
+                <a  th:if="${(#authentication.principal.id == owner.id) or (#authentication.principal.getRole().getName().equals('ADMIN'))}"
+                    th:href="@{|/collections/all/users/${collaborator.id}|}"
+                    th:text="${collaborator.firstName + ' ' + collaborator.lastName}"/>
+                <a  th:if="${(#authentication.principal.id != owner.id) && (#authentication.principal.getRole().getName().equals('USER'))}"
+                    th:text="${collaborator.firstName + ' ' + collaborator.lastName}"/>
+            </td>
+            <td>
+                <a th:if="${(#authentication.principal.id == owner.id) or (#authentication.principal.getRole().getName().equals('ADMIN'))}"
+                    th:href="@{/collections/{id}/remove(id = ${collection.id}, user_id = ${collaborator.id})}">Remove</a>
+            </td>
+        </tr>
+    </table>
+
+    <span>
+        <a th:href="@{|/collections/all/users/${collection.owner.id}|}">Go to Collection Lists</a>
+    </span>
+</div>
+</body>
+</html>

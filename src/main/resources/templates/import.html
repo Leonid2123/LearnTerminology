@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <title>Import Termins</title>
+</head>
+<body>
+<div th:replace="~{header}"></div>
+<div class="col-md-offset-2">
+  <h2>Import Termins</h2>
+</div>
+<form class="form-horizontal" th:action="@{|/termins/import/collections/${collection.id}|}" th:object="${termins}" method="post">
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="text">Your List:</label>
+    <div class="col-sm-6">
+      <textarea style="width: 400px; height: 200px;" class="form-control" type="text" th:field="*{text}" id="text"></textarea>
+    </div>
+  </div>
+  <div class="col-sm-offset-2 col-sm-6">
+    <input class="btn btn-info" type="submit" value="Import"/>
+    <input class="btn btn" type="reset" value="Clear"/>
+  </div>
+</form>
+<a th:href="@{|/collections/${collection.id}/termins|}">Go to Collection</a>
+</body>
+</html>

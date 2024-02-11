@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>All Collection lists of User</title>
+</head>
+<body>
+<div th:replace="~{header}"></div>
+<div class="col-md-offset-2 col-sm-8">
+    <h2 th:text="${'All Collection Lists of ' + user.firstName + ' ' + user.lastName}"/>
+    <form th:action="@{|/collections/create/users/${user.id}|}" method="get">
+        <div align="right">
+            <input class="btn-info btn-lg" type="submit" value="Create New Collection">
+        </div>
+    </form>
+    <br>
+    <table class="table">
+        <tr>
+            <th>No.</th>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Created At</th>
+            <th>Owner</th>
+            <th colspan="2">Operations</th>
+        </tr>
+        <tr th:each="collection, iStat: ${collections}">
+            <td th:text="${iStat.index + 1}"/>
+            <td th:text="${collection.id}"/>
+            <td>
+                <a th:href="@{|/collections/${collection.id}/termins|}" th:text="${collection.title}"/>
+            </td>
+            <td th:text="${#temporals.format(collection.createdAt, 'dd.MM.yyyy HH:mm')}"/>
+            <td th:text="${collection.getOwner().firstName + ' ' + collection.getOwner().lastName}"></td>
+            <td>
+                <div th:if="${collection.owner.getUsername() eq username or collection.getCollaborators().contains(principal) or isAdmin eq true}">
+                    <a th:href="@{|/collections/${collection.id}/update/users/${collection.owner.id}|}">Edit</a>
+                </div>
+                <div th:if="${collection.owner.getUsername() ne username and isAdmin eq false}">
+                    <a style="color: gray;" th:href="@{/forbidden}">Edit</a>
+                </div>
+            </td>
+            <td>
+                <div th:if="${collection.owner.getUsername() eq username or collection.getCollaborators().contains(principal) or isAdmin eq true}">
+                    <a th:href="@{|/collections/${collection.id}/delete/users/${collection.owner.id}|}">Remove</a>
+                </div>
+                <div th:if="${collection.owner.getUsername() ne username and isAdmin eq false}">
+                    <a style="color: gray;" th:href="@{/forbidden}">Remove</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

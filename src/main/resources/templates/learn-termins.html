@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Learn Termins</title>
+    <style>
+        .slides {
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 600px;
+            padding: 20px;
+        }
+
+        .slide {
+            min-width: 200px;
+            display: none;
+            opacity: 0;
+            transition: 0.5s;
+            user-select: none;
+        }
+
+        .active {
+            display: block;
+        }
+        .visual_active{
+            opacity: 1;
+        }
+
+        .card {
+            position: relative;
+            width: 200px;
+            height: 260px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            /*transition: transform 0.5s;*/
+        }
+
+        .card.is-flipped {
+            transform: rotateY(-180deg);
+        }
+
+        .card__face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 40px;
+            backface-visibility: hidden;
+        }
+
+        .card__face--front {
+            background: crimson;
+            border-radius: 10px;
+        }
+
+        .card__face--back {
+            background: slateblue;
+            border-radius: 10px;
+            transform: rotateY(180deg);
+        }
+    </style>
+<body>
+
+<div th:replace="~{header}"></div>
+
+<div style="text-align: center; font-size: 24pt;" th:if="${first == null}">Your Collection is empty</div>
+
+<div th:if="${first != null}" class="carousel">
+    <div class="slides">
+
+        <div class="card slide active visual_active">
+            <div class="card__face card__face--front" th:text="${first.getName()}"></div>
+            <div class="card__face card__face--back" th:text="${first.getMeaning()}"></div>
+        </div>
+
+        <div class="card slide" th:each="termin : ${termins}">
+            <div class="card__face card__face--front" th:text="${termin.name}"></div>
+            <div class="card__face card__face--back" th:text="${termin.meaning}"></div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <button style="margin-right: 5px;" class="btn btn previous">previous</button>
+        <button style="margin-left: 5px;" class="btn btn next">next</button>
+    </div>
+</div>
+<div style="display: flex; justify-content: center; margin-top: 5px;">
+    <a th:href="@{|/collections/${collection_id}/termins|}">Go back to Collection</a>
+</div>
+
+<script>
+    const items = document.querySelectorAll('.slide');
+    const itemCount = items.length;
+    const nextItem = document.querySelector('.next');
+    const previousItem = document.querySelector('.previous');
+    let count = 0;
+
+    function showNextItem() {
+        items[count].classList.remove('visual_active');
+        items[count].classList.remove('active');
+
+        if(count < itemCount - 1) {
+            count++;
+        } else {
+            count = 0;
+        }
+
+        items[count].classList.remove('is-flipped');
+        items[count].classList.add('active');
+        setTimeout(function () {
+            items[count].classList.add('visual_active');
+        }, 50);
+        console.log(count);
+    }
+
+    function showPreviousItem() {
+        items[count].classList.remove('visual_active');
+        items[count].classList.remove('active');
+
+        if(count > 0) {
+            count--;
+        } else {
+            count = itemCount - 1;
+        }
+
+        items[count].classList.remove('is-flipped');
+        items[count].classList.add('active');
+        setTimeout(function () {
+            items[count].classList.add('visual_active');
+        }, 50);
+        console.log(count);
+    }
+
+    function keyPress(e) {
+        e = e || window.event;
+
+        if (e.keyCode == '37') {
+            showPreviousItem();
+        } else if (e.keyCode == '39') {
+            showNextItem();
+        }
+    }
+
+    nextItem.addEventListener('click', showNextItem);
+    previousItem.addEventListener('click', showPreviousItem);
+    document.addEventListener('keydown', keyPress);
+
+    var cards = document.querySelectorAll('.card');
+
+    [...cards].forEach((card)=>{
+        card.addEventListener( 'click', function() {
+            card.classList.toggle('is-flipped');
+        });
+    });
+</script>
+</body>
+</html>

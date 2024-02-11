@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Create New Termin</title>
+</head>
+<body>
+<div th:replace="~{header}"></div>
+<div class="col-md-offset-2">
+    <h2>Create New Termin</h2>
+</div>
+<form class="form-horizontal" th:action="@{|/termins/create/collections/${collection.id}|}" th:object="${termin}" method="post">
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="name">Name:</label>
+        <div class="col-sm-6">
+            <input class="form-control" type="text" th:field="*{name}" id="name"/>
+            <small class="form-text text-muted" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="name">Meaning:</label>
+        <div class="col-sm-6">
+            <input class="form-control" type="text" th:field="*{meaning}" id="meaning"/>
+            <small class="form-text text-muted" th:if="${#fields.hasErrors('meaning')}" th:errors="*{meaning}"></small>
+        </div>
+    </div>
+    <div class="col-sm-offset-2 col-sm-6">
+        <input class="btn btn-info" type="submit" value="Create"/>
+        <input class="btn btn" type="reset" value="Clear"/>
+    </div>
+    <input type="hidden" name="collectionId" th:value="${collection.id}">
+</form>
+    <a th:href="@{|/collections/${collection.id}/termins|}">Go to Collection</a>
+</body>
+</html>
